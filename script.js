@@ -11,6 +11,10 @@ const startPauseBt = document.querySelector("#start-pause");
 const botoes = document.querySelectorAll(".app__card-button");
 const musicaFocoInput = document.querySelector("#alternar-musica");
 const iniciarOuPausarBt = document.querySelector("#start-pause span");
+const tempoNaTela = document.querySelector("#timer");
+
+//Imagem do botão de pause
+const playPauseImg = document.querySelector(".app__card-primary-butto-icon");
 
 const displayTempo = document.querySelector("#timer");
 const musica = new Audio("sons/luna-rise-part-one.mp3"); // Caminhdo do arquivo de áudio
@@ -20,7 +24,7 @@ const somPause = new Audio("sons/pause.mp3");
 const somInicio = new Audio("sons/play.wav");
 const somFinalizacao = new Audio("sons/beep.mp3");
 
-let temporizadorEmSegundos = 5;
+let temporizadorEmSegundos = 1500;
 let intervaloId = null;
 
 musicaFocoInput.addEventListener("change", () => {
@@ -32,21 +36,25 @@ musicaFocoInput.addEventListener("change", () => {
 });
 
 focoBt.addEventListener("click", () => {
+  temporizadorEmSegundos = 1500;
   alterarContexto("foco");
   focoBt.classList.add("active");
 });
 
 curtoBt.addEventListener("click", () => {
+  temporizadorEmSegundos = 300;
   alterarContexto("descanso-curto");
   curtoBt.classList.add("active");
 });
 
 longoBt.addEventListener("click", () => {
+  temporizadorEmSegundos = 900;
   alterarContexto("descanso-longo");
   longoBt.classList.add("active");
 });
 
 function alterarContexto(contexto) {
+  mostrarTempo();
   botoes.forEach(function (contexto) {
     contexto.classList.remove("active");
   });
@@ -91,6 +99,7 @@ function iniciarOuPausar() {
   //to do Tocar música de início
   somInicio.play();
   iniciarOuPausarBt.textContent = "Pausar";
+  playPauseImg.setAttribute("src", "imagens/pause.png");
 }
 
 const contagemRegressiva = () => {
@@ -102,13 +111,22 @@ const contagemRegressiva = () => {
     return;
   }
   temporizadorEmSegundos -= 1;
-  console.log("Temporizador: " + temporizadorEmSegundos);
+  mostrarTempo();
 };
 
 function zerar() {
   clearInterval(intervaloId);
   intervaloId = null;
   iniciarOuPausarBt.textContent = "Começar";
+  playPauseImg.setAttribute("src", "imagens/play_arrow.png");
 }
 
 startPauseBt.addEventListener("click", iniciarOuPausar);
+
+function mostrarTempo() {
+  const tempo = new Date(temporizadorEmSegundos * 1000);
+  const tempoFormatado = tempo.toLocaleTimeString("pt-BR", { minute: "2-digit", second: "2-digit" });
+  tempoNaTela.innerHTML = `${tempoFormatado}`;
+}
+
+mostrarTempo();
